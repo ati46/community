@@ -1,0 +1,123 @@
+server:
+  port: 1024
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:123456@localhost/test
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  datasource:
+    url: jdbc:mysql://localhost:3306/community?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  freemarker:
+    allow-request-override: false # 是否允许HttpServletRequest属性覆盖(隐藏)控制器生成的同名模型属性。
+    allow-session-override: false # 是否允许HttpSession属性覆盖(隐藏)控制器生成的同名模型属性。
+    cache: false # 是否启用模板缓存。
+    charset: UTF-8 # 模板编码。
+    check-template-location: true # 是否检查模板位置是否存在。
+    content-type: text/html # Content-Type value.
+    enabled: true # 是否启用freemarker
+    expose-request-attributes: false # 设定所有request的属性在merge到模板的时候，是否要都添加到model中.
+    expose-session-attributes: false # 是否在merge模板的时候，将HttpSession属性都添加到model中
+    expose-spring-macro-helpers: true # 设定是否以springMacroRequestContext的形式暴露RequestContext给Spring’s macro library使用
+    prefer-file-system-access: false # 是否优先从文件系统加载template，以支持热加载，默认为true
+    suffix: .ftl # 设定模板的后缀.
+    template-loader-path: classpath:/templates/ # 设定模板的加载路径，多个以逗号分隔，默认:
+    request-context-attribute: request
+    settings:
+      classic_compatible: true
+  #SpringMVC 配置静态资源路径
+  resources:
+    static-locations: classpath:/static/
+web:
+  static-path: /home/lwt/Download/
+
+# JWT配置
+jwt:
+  # 密匙KEY
+  secret: JWTSecret
+  # HeaderKEY
+  tokenHeader: Authorization
+  # Token前缀字符
+  tokenPrefix: Sans-
+  # 过期时间 单位秒 1天后过期=86400 7天后过期=604800
+  expiration: 86400
+  # 配置不需要认证的接口
+  antMatchers: /index,/login/**,/favicon.ico
+# Mybatis-plus相关配置
+mybatis-plus:
+  # xml扫描，多个目录用逗号或者分号分隔（告诉 Mapper 所对应的 XML 文件位置）
+  mapper-locations: classpath:mapper/*.xml
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: AUTO
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 返回map时true:当查询数据为空时字段返回为null,false:不加这个查询数据为空时，字段将被隐藏
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+config:
+  pagesize: 5
+  #  排序属性
+  sortcolumn:  id
+  #  排序规则 1 升序  2 降序
+  sorttype: 1
+  # 跨域ip处理
+  origins: http://localhost:8080,http://192.168.99.100:8091,http://127.0.0.1:8080,http://cebon.hoteas.com:8082
+
+
+
+custom:
+  config:
+    ignores:
+      get:
+        - "/login"
+        - "/index"
+        - "/**"
+        - "/web/**"
+      # 需要过滤的 post 请求
+      post:
+        - "/login"
+        - "/logout"
+        - "/refresh/token"
+      # options的请求不拦截
+      options:
+        - "/**"
+      # 需要过滤的请求，不限方法
+      pattern:
+        - "/admin/*"
+        - "/jq-module/**"
+        - "/js/**"
+        - "/images/**"
+        - "/editormd/**"
+        - "/font-awesome-4.7.0/**"
+        - "/favicon.ico"
+        - "/static/**"
+        - "/resources/**"
+        - "/layui/**"
+        - "/error"
+        - "/status/*"
+        - "/swagger-ui.html"
+        - "/v2/**"
+        - "/webjars/**"
+        - "/swagger-resources/**"
+# Elasticsearch配置
+elasticsearch:
+  hostname: 127.0.0.1
+  port: 9200
+
+file:
+  rootPath: /opt/Apps/nginx/www/images
+  urlPath: http://localhost/images/
