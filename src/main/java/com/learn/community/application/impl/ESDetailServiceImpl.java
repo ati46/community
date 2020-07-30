@@ -6,6 +6,7 @@ import com.learn.community.domain.bean.es.ESDetail;
 import com.learn.community.infrastructure.utils.ElasticUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.IndicesOptions;
@@ -118,8 +119,12 @@ public class ESDetailServiceImpl implements ESDetailService {
         SearchResponse searchResponse = null;
         try {
             searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | ElasticsearchStatusException e) {
+            log.error("es搜索出错", e);
+            return null;
+        }
+        if (searchResponse != null) {
+            return null;
         }
         SearchHits hits = searchResponse.getHits();
         // 获取总数

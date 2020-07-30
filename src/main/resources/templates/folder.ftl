@@ -51,7 +51,9 @@
     $(function () {
         $("#folder").addClass('layui-this');
         var folderId = $("#foldersUl li:first").attr("id");
-        findArticleList(folderId);
+        if (folderId) {
+            findArticleList(folderId);
+        }
     })
 
     function search(e) {
