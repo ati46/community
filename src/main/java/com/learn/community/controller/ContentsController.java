@@ -8,6 +8,7 @@ import com.learn.community.controller.param.ContentParam;
 import com.learn.community.controller.vo.ContentVO;
 import com.learn.community.domain.bean.es.ESDetail;
 import com.learn.community.domain.bean.mysql.Contents;
+import com.learn.community.infrastructure.annotation.AccessLimit;
 import com.learn.community.infrastructure.response.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -43,10 +44,10 @@ public class ContentsController {
         return result + "";
     }
 
+    @AccessLimit(limit = 1, time = 1000)
     @PutMapping("/detail")
     public ContentVO modifydetail(@RequestBody ContentParam contentParam) {
         Contents contents = contentsService.updateByPrimaryKeyForDetail(ContentAssembler.ContentParamToContents(contentParam));
-
         return ContentAssembler.ContentToContentVO(contents);
     }
 

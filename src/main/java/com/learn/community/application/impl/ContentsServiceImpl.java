@@ -1,9 +1,12 @@
 package com.learn.community.application.impl;
 
 import com.learn.community.application.ContentsService;
+import com.learn.community.application.UsersService;
 import com.learn.community.domain.bean.mysql.Contents;
+import com.learn.community.domain.bean.mysql.Users;
 import com.learn.community.domain.dao.mysql.mapper.ContentsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +23,8 @@ public class ContentsServiceImpl implements ContentsService {
     @Autowired
     private ContentsMapper contentsMapper;
 
+    @Autowired
+    private UsersService usersService;
 
     @Override
     public int insert(Contents contents) {
@@ -54,9 +59,11 @@ public class ContentsServiceImpl implements ContentsService {
     @Override
     public Contents updateByPrimaryKeyForDetail(Contents contents) {
         if (contents.getId() == 0) {
-            contents.setAuthor("admin");
-            contents.setAuthorId(1);
-            contents.setTag("java");
+            Users users = usersService.getLoginUser();
+            if (users != null) {
+                contents.setAuthorId(users.getId());
+                contents.setAuthor(users.getName());
+            }
             contents.setCreateTime(System.currentTimeMillis());
             contents.setUpdateTime(System.currentTimeMillis());
             contentsMapper.insert(contents);

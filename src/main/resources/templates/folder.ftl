@@ -24,6 +24,7 @@
     <div class="layui-col-xs8 layui-col-sm7 layui-col-md9" style="height: calc(100vh - 61px); overflow: hidden;">
         <span id="contentId" style="display: none"></span>
         <span id="articleId" style="display: none"></span>
+        <span id="addOnclick" style="display: none">true</span>
         <div id="bar" style="width: 100%; height: 30px; background-color: #393D49; border-bottom: 1px solid #009688;" ondblclick="addTag(event)">
             <div style="float: left; height: 20px; margin-top: 5px; margin-left: 10px;">
                 <i class="layui-icon layui-icon-note" style="font-size: 20px; color: whitesmoke;"></i>
@@ -457,7 +458,13 @@
                  * @param {String}      selection  编辑器选中的文本
                  */
                 testIcon: function (cm, icon, cursor, selection) {
-                    savemd();
+                    console.info($("#addOnclick").html());
+                    if ($("#addOnclick").html() === "true") {
+                        $("#addOnclick").html("false");
+                        savemd();
+                    }else{
+                        layer.msg("请勿快速点击！");
+                    }
                 }
             },
             imageUpload: true,
@@ -515,6 +522,7 @@
         testEditor.previewing();
     }
     function savemd() {
+        $("#newTagName").remove();
         var htmlContent = testEditor.getHTML();
         var markContent = testEditor.getMarkdown();
         var id = $("#contentId").html();
@@ -537,7 +545,7 @@
             "data": JSON.stringify(data),
             "contentType": 'application/json;charset=utf-8',
             success: function (ret) {
-                console.info(ret);
+                $("#addOnclick").html("true");
                 $('#contentId').html(ret.data.id);
                 $('#articleId').html(ret.data.articleId);
                 layer.msg(ret.msg);

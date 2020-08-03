@@ -3,6 +3,7 @@ package com.learn.community.application;
 import com.learn.community.controller.param.LoginParam;
 import com.learn.community.controller.vo.UserVO;
 import com.learn.community.domain.bean.mysql.Users;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface UsersService {
     boolean logout(LoginParam loginParam);
 
     boolean isLogin();
+
+    Users getLoginUser();
 }

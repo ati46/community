@@ -88,4 +88,20 @@ public class UsersServiceImpl implements UsersService {
     }
 
 
+    @Override
+    public Users getLoginUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null) {
+                Users users = (Users) authentication.getPrincipal();
+                //TODO 管理员特殊处理
+                return users;
+            }
+        } catch (Exception e) {
+            log.error("获取登录状态出错", e);
+        }
+        return null;
+    }
+
+
 }
