@@ -1,3 +1,15 @@
+management:
+  endpoint:
+    shutdown:
+      enabled: true #启用shutdown
+  endpoints:
+    web:
+      base-path: /mgm #修改路径，默认/actuator
+      exposure:
+        include: shutdown, health #开启shutdown  "*"开启全部
+  server:
+    port: 1025 #修改限制的端口，默认和server一样
+    address: 127.0.0.1
 server:
   port: 1024
 spring:
@@ -89,6 +101,7 @@ custom:
         - "/web/**"
       # 需要过滤的 post 请求
       post:
+        - "/mgm/**"
         - "/login"
         - "/logout"
         - "/refresh/token"
