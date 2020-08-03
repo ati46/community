@@ -53,21 +53,6 @@
     </ul>
 
 </div>
-<div id="loginDiv" style="display: none ">
-        <div>
-            <i class="layui-icon layui-icon-username admin-icon"></i>
-            <input type="text" id="loginName" name="loginName" placeholder="请输入用户名" autocomplete="off" class="layui-input admin-input admin-input-username" value="admin">
-        </div>
-        <div>
-            <i class="layui-icon layui-icon-password admin-icon"></i>
-            <input type="password" id="passWord" name="passWord" placeholder="请输入密码" autocomplete="off" class="layui-input admin-input" value="123456">
-        </div>
-        <#--            <div>-->
-        <#--                <input type="text" name="captcha" placeholder="请输入验证码" autocomplete="off" class="layui-input admin-input admin-input-verify" value="xszg">-->
-        <#--                <img class="admin-captcha" width="90" height="30" src="../images/captcha.jpg">-->
-        <#--            </div>-->
-        <button class="layui-btn admin-button" lay-submit="" lay-filter="login" onclick="login()">登 陆</button>
-</div>
 <script src="/layui/layui.js" charset="utf-8"></script>
 <script>
     var local_token = null;
@@ -163,17 +148,36 @@
             closeBtn: 0, //不显示关闭按钮
             anim: 2,
             shadeClose: true, //开启遮罩关闭
-            content: $("#loginDiv").html()
+            //content: $("#loginDiv").html()
+            content: "<div id=\"loginDiv\">\n" +
+                "        <div>\n" +
+                "            <i class=\"layui-icon layui-icon-username admin-icon\"></i>\n" +
+                "            <input type=\"text\" id=\"loginName\" name=\"loginName\" placeholder=\"请输入用户名\" autocomplete=\"off\" class=\"admin-input admin-input-username\" />\n" +
+                "        </div>\n" +
+                "        <div>\n" +
+                "            <i class=\"layui-icon layui-icon-password admin-icon\"></i>\n" +
+                "            <input type=\"password\" id=\"passWord\" name=\"passWord\" placeholder=\"请输入密码\" autocomplete=\"off\" class=\"admin-input\" />\n" +
+                "        </div>\n" +
+                "        <#--            <div>-->\n" +
+                "        <#--                <input type=\"text\" name=\"captcha\" placeholder=\"请输入验证码\" autocomplete=\"off\" class=\"layui-input admin-input admin-input-verify\" value=\"xszg\">-->\n" +
+                "        <#--                <img class=\"admin-captcha\" width=\"90\" height=\"30\" src=\"../images/captcha.jpg\">-->\n" +
+                "        <#--            </div>-->\n" +
+                "        <button class=\"layui-btn admin-button\" lay-submit=\"\" lay-filter=\"login\" onclick=\"login()\">登 陆</button>\n" +
+                "</div>"
         });
     }
 
     function login() {
         var loginName = $("#loginName").val();
         var passWord = $("#passWord").val();
+        if (loginName === "" || passWord === "" || loginName === undefined || passWord === undefined) {
+            layer.msg("请输入正确的用户名或密码");
+            return;
+        }
         var data = {
             "loginName": loginName,
             "passWord": passWord
-        }
+        };
         $.ajax({
             "type": 'post',
             "cache": false,
