@@ -1,7 +1,6 @@
 package com.learn.community.domain.dao.mysql.mapper;
 
 import com.learn.community.domain.bean.mysql.Contents;
-import com.learn.community.infrastructure.annotation.SqlCopy;
 import com.learn.community.infrastructure.annotation.ModifyCopy;
 import org.apache.ibatis.annotations.*;
 
@@ -34,6 +33,6 @@ public interface ContentsMapper {
     List<Contents> selectAll();
 
     @ModifyCopy
-    @Update("update contents set htmlContent = #{htmlContent}, markContent = #{markContent}, updateTime = #{updateTime} where id = #{id} and articleId = #{articleId}")
+    @Update("update contents set htmlContent = #{htmlContent}, markContent = #{markContent}, updateTime = #{updateTime}, tag=#{tag} where id = #{id} and articleId = #{articleId}")
     int updateByPrimaryKeyForDetail(Contents contents);
 }

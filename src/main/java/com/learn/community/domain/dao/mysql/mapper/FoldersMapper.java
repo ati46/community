@@ -1,7 +1,6 @@
 package com.learn.community.domain.dao.mysql.mapper;
 
 import com.learn.community.domain.bean.mysql.Folders;
-import com.learn.community.infrastructure.annotation.SqlCopy;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

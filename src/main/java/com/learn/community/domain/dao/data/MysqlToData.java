@@ -46,5 +46,7 @@ public class MysqlToData {
     public void updateContent(Contents contents) {
         Detail detail = MysqlToDataAssembler.mysqlContentsToMongodbDetail(contents, null);
         detailRepo.updateContent(detail);
+        ESDetail esDetail = MysqlToDataAssembler.detailToESDetail(detail);
+        esDetailRepo.updateContent(esDetail);
     }
 }

@@ -11,4 +11,7 @@ import com.learn.community.domain.bean.es.ESDetail;
 public interface ESDetailRepo {
 
     void insert(ESDetail esDetail);
+
+    void updateContent(ESDetail esDetail);
+
 }

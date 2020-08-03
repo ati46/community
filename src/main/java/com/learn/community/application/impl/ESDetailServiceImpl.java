@@ -3,6 +3,7 @@ package com.learn.community.application.impl;
 import com.alibaba.fastjson.JSON;
 import com.learn.community.application.ESDetailService;
 import com.learn.community.domain.bean.es.ESDetail;
+import com.learn.community.infrastructure.common.EsConstant;
 import com.learn.community.infrastructure.utils.ElasticUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -113,7 +114,7 @@ public class ESDetailServiceImpl implements ESDetailService {
         }
         SearchSourceBuilder searchSourceBuilder = ElasticUtil.initSearchSourceBuilder(boolQueryBuilder, pageStart, pageSize);
         // SearchRequest
-        SearchRequest searchRequest = new SearchRequest("detail");
+        SearchRequest searchRequest = new SearchRequest(EsConstant.DETAIL);
         searchRequest.source(searchSourceBuilder);
         // 查询ES
         SearchResponse searchResponse = null;
@@ -123,7 +124,7 @@ public class ESDetailServiceImpl implements ESDetailService {
             log.error("es搜索出错", e);
             return null;
         }
-        if (searchResponse != null) {
+        if (searchResponse == null) {
             return null;
         }
         SearchHits hits = searchResponse.getHits();
@@ -202,8 +203,61 @@ public class ESDetailServiceImpl implements ESDetailService {
 
     @Override
     public ESDetail selectByArticleId(int id) {
+        //MatchQueryBuilder matchQueryBuilder = null;
+        BoolQueryBuilder boolQueryBuilder = null;
+        boolQueryBuilder = QueryBuilders.boolQuery();
 
-        return null;
+        boolQueryBuilder.must(QueryBuilders.matchQuery("articleId", id));
+        SearchSourceBuilder searchSourceBuilder = ElasticUtil.initSearchSourceBuilder(boolQueryBuilder);
+        // SearchRequest
+        SearchRequest searchRequest = new SearchRequest(EsConstant.DETAIL);
+        searchRequest.source(searchSourceBuilder);
+        // 查询ES
+        SearchResponse searchResponse = null;
+        try {
+            searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        } catch (IOException | ElasticsearchStatusException e) {
+            log.error("es搜索出错", e);
+            return null;
+        }
+        if (searchResponse == null) {
+            return null;
+        }
+        SearchHits hits = searchResponse.getHits();
+        // 获取总数
+        Long total = hits.getTotalHits().value;
+        // 遍历封装列表对象
+        List<ESDetail> esList = new ArrayList<>();
+        SearchHit[] searchHits = hits.getHits();
+        for (SearchHit searchHit : searchHits) {
+            ESDetail esDetail = JSON.parseObject(searchHit.getSourceAsString(), ESDetail.class);
+            Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
+            String markContent = getHighLightString("markContent", highlightFields);
+            String htmlContent = getHighLightString("htmlContent", highlightFields);
+            String folderName = getHighLightString("folderName", highlightFields);
+            String articleName = getHighLightString("articleName", highlightFields);
+            String tag = getHighLightString("tag", highlightFields);
+            if (StringUtils.isNotBlank(tag)) {
+                esDetail.setTag(tag);
+            }
+            if (StringUtils.isNotBlank(articleName)) {
+                esDetail.setArticleName(articleName);
+            }
+            if (StringUtils.isNotBlank(folderName)) {
+                esDetail.setFolderName(folderName);
+            }
+            if (StringUtils.isNotBlank(htmlContent)) {
+                esDetail.setHtmlContent(htmlContent);
+            }
+            if (StringUtils.isNotBlank(markContent)) {
+                esDetail.setMarkContent(markContent);
+            }
+            esList.add(esDetail);
+        }
+        if (esList.size() > 0) {
+            return esList.get(0);
+        }
+        return new ESDetail();
     }
 
     @Override

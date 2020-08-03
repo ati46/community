@@ -29,7 +29,8 @@
         .highlight { color: #aa5500}
         i {position:absolute;}
         .admin-captcha {position:absolute;margin-left:205px;margin-top:-40px;}
-
+        .inline {display: inline; margin-left: 10px; height: 20px;}
+        .newTag{ background-color: #424652; border: none 0; color: #fff}
         #acs{
             overflow-x: hidden;
             overflow-y: scroll;

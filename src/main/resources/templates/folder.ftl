@@ -24,10 +24,10 @@
     <div class="layui-col-xs8 layui-col-sm7 layui-col-md9" style="height: calc(100vh - 61px); overflow: hidden;">
         <span id="contentId" style="display: none"></span>
         <span id="articleId" style="display: none"></span>
-        <div id="bar" style="width: 100%; height: 30px; background-color: #393D49; border-bottom: 1px solid #009688;">
+        <div id="bar" style="width: 100%; height: 30px; background-color: #393D49; border-bottom: 1px solid #009688;" ondblclick="addTag(event)">
             <div style="float: left; height: 20px; margin-top: 5px; margin-left: 10px;">
                 <i class="layui-icon layui-icon-note" style="font-size: 20px; color: whitesmoke;"></i>
-                <div id="tag" style="margin-left: 30px;">
+                <div id="tag" style="margin-left: 30px;" >
                 </div>
             </div>
             <div id="tools" style="float: right; width: 20px; height: 20px; margin-top: 5px; margin-right: 10px;">
@@ -104,6 +104,7 @@
             // },
             success: function (ret) {
                 $('#markDiv').empty();
+                $('#tag').html('');
                 $('#markDiv').append('<div id="editormd-view" style="box-sizing: border-box;">\n' +
                     '        <textarea id="content-text" style="display:none;">\n' +
                     '\n' +
@@ -165,6 +166,17 @@
         }
     }
 
+    function addTag(e) {
+        if (e.target.id === "bar") {
+            if (getLoginStatus()) {
+                $('#tag').append('<input class="inline newTag" type="text" id="newTagName" name="tagName" onkeydown="inputTagEnter(event)">');
+                $("#newTagName").focus();
+            } else {
+                layer.msg("未登录");
+            }
+        }
+    }
+
     $(window).scroll(function () {
         var t = $(document).scrollTop();
         //console.info(t);
@@ -181,8 +193,92 @@
         }
     }
 
+    function inputTagEnter(e) {
+        var evt = window.event || e;
+        if (evt.keyCode == 13) {
+            //回车后要干的业务代码
+            var _isInvalid = false;
+            var newTagText = $("#newTagName").val();
+            if (newTagText === "" || newTagText === undefined) {
+                layer.msg("请输入正确的标签！");
+                return;
+            }
+            var tag = "";
+            $("#tag").find("span").each(function (i) {
+                var tagText = $(this).text();
+                if (newTagText === tagText) {
+                    layer.msg("标签已重复！");
+                    _isInvalid = true;
+                    return false;
+                }
+                tag += tagText + ",";
+            });
+            if (_isInvalid) {
+                return false;
+            }
+            tagEvent();
+            console.info($("#edit").attr("onclick"));
+            if ($("#edit").attr("onclick") === "editmd();") {
+                editmd();
+            }
+        } else if (evt.keyCode == 27) {
+            //ESC
+
+        }
+    }
+
     function cleanFolder() {
         $("#newFolder").remove();
+    }
+
+
+    function tagEvent() {
+        var tag = $("#newTagName").val();
+        console.info(tag);
+        $("#newTagName").before("<span class='layui-badge inline'>" + tag + "</span>");
+        // var id = $("#contentId").html();
+        // var articleId = $("#articleId").html();
+        //
+        // layer.confirm('确认添加标签：' + tag + '？', {
+        //     btn: ['确定', '取消'] //按钮
+        // }, function () {
+        //     if (tag === "" || tag === null || tag === undefined) {
+        //         layer.alert('请输入标签名称', {
+        //             icon: 1,
+        //             skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+        //         })
+        //         return;
+        //     }
+        //     $("#newTag").html('');
+        //
+        //     var data = {
+        //         "id": id,
+        //         "articleId": articleId,
+        //         "tag": tag
+        //     }
+        //     $.ajax({
+        //         "type": 'post',
+        //         "cache": false,
+        //         "url": "/content/tag",
+        //         "contentType": "application/json",
+        //         "data": JSON.stringify(data),
+        //         success: function (ret) {
+        //             $("#newFolder").append('<a href="javascript:;" onclick="findArticleList(' + ret.data.id + ')">' + ret.data.title + '</a>');
+        //             $("#newFolder").attr("av", ret.data.id);
+        //             $("#newFolder").removeAttr("id");
+        //             element.render('nav', 'nav1');
+        //             layer.msg('添加成功');
+        //         },
+        //         error: function (err) {
+        //             layer.msg('请求失败');
+        //             console.error(err);
+        //         }
+        //     })
+        // }, function () {
+        //     $("#newFolder").remove();
+        //     layer.msg('取消成功');
+        // });
+
     }
 
     function folerEvent() {
@@ -397,7 +493,10 @@
         var arr = tags.split(',');
         $("#tag").html("");
         arr.forEach(function (item) {
-            $("#tag").append("<span class='layui-badge'>" + item + "</span>")
+            console.info(item);
+            if (item !== undefined && item !== "") {
+                $("#tag").append("<span class='layui-badge inline'>" + item + "</span>");
+            }
         })
     }
     function editmd() {
@@ -420,11 +519,16 @@
         var markContent = testEditor.getMarkdown();
         var id = $("#contentId").html();
         var articleId = $("#articleId").html();
+        var tag = "";
+        $("#tag").find("span").each(function(i){
+            tag += $(this).text() + ",";
+        })
         var data = {
             "id": id,
             "articleId": articleId,
             "htmlContent": htmlContent,
-            "markContent": markContent
+            "markContent": markContent,
+            "tag": tag
         };
         $.ajax({
             "type": 'put',

@@ -55,11 +55,14 @@ public class ContentsController {
     public ContentVO find(@PathVariable int id) {
         //使用es的高亮搜索，所以需要把查询从sql改成es
         Contents contents = contentsService.selectByArticleId(id);
+        ESDetail esDetail = esDetailService.selectByArticleId(id);
+
         ContentVO contentVO = new ContentVO();
-        if (null != contents) {
-            contentVO = ContentAssembler.ContentToContentVO(contents);
+        if (null != esDetail) {
+            contentVO = ContentAssembler.ESDetailToContentVO(esDetail);
         }
         contentVO.setStatus(usersService.isLogin() ? 1 : 0);
+
         return contentVO;
     }
 }
